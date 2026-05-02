@@ -1,20 +1,23 @@
 <?php
 
-use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
-
-define('LARAVEL_START', microtime(true));
-
-// Determine if the application is in maintenance mode...
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
-    require $maintenance;
+// Chuyển hướng các yêu cầu file tĩnh (ảnh, css, js...) vào thư mục public
+if (file_exists(__DIR__ . '/../public' . $_SERVER['REQUEST_URI'])) {
+    return false;
 }
 
-// Register the Composer autoloader...
-require __DIR__.'/../vendor/autoload.php';
+// Đường dẫn trỏ đến file autoload.php trong thư mục vendor
+require __DIR__ . '/../vendor/autoload.php';
 
-// Bootstrap Laravel and handle the request...
-/** @var Application $app */
-$app = require_once __DIR__.'/../bootstrap/app.php';
+// Đường dẫn trỏ đến file app.php trong thư mục bootstrap
+$app = require_once __DIR__ . '/../bootstrap/app.php';
 
-$app->handleRequest(Request::capture());
+// Khởi tạo kernel và xử lý yêu cầu
+$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+
+$response = $kernel->handle(
+    $request = Illuminate\Http\Request::capture()
+);
+
+$response->send();
+
+$kernel->terminate($request, $response);

@@ -85,22 +85,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Admin - User management
     Route::middleware(['role:admin'])->group(function () {
-        // Keeping both AdminUserController and UserController as they might serve different purposes or be in transition
         Route::get('/admin/users', [AdminUserController::class, 'index']);
         Route::post('/admin/users', [AdminUserController::class, 'store']);
         Route::put('/admin/users/{id}', [AdminUserController::class, 'update']);
         Route::delete('/admin/users/{id}', [AdminUserController::class, 'destroy']);
         
-        Route::get('/users', [UserController::class, 'index']);
-        Route::post('/users', [UserController::class, 'store']);
-        Route::put('/users/{id}', [UserController::class, 'update']);
-        Route::delete('/users/{id}', [UserController::class, 'destroy']);
         Route::get('/roles', [UserController::class, 'roles']);
+
+        // Admin - Salon settings management
+        Route::get('/admin/salon-settings', [SalonSettingController::class, 'index']);
+        Route::put('/admin/salon-settings', [SalonSettingController::class, 'update']);
+        Route::post('/admin/salon-settings/upload-image', [SalonSettingController::class, 'uploadImage']);
+        Route::delete('/admin/salon-settings/delete-image', [SalonSettingController::class, 'deleteImage']);
     });
 });
-
-// Admin - Salon settings management
-Route::get('/salon-settings', [SalonSettingController::class, 'index']);
-Route::put('/salon-settings', [SalonSettingController::class, 'update']);
-Route::post('/salon-settings/upload-image', [SalonSettingController::class, 'uploadImage']);
-Route::delete('/salon-settings/delete-image', [SalonSettingController::class, 'deleteImage']);
